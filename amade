@@ -1,0 +1,12 @@
+#!/bin/bash
+# If error of bash : Bad Substitution, because using dash bash
+# sudo bash <(curl -s https://raw.githubusercontent.com/raultm/amade/master/amade)
+IMAGE_SELECTED=$(whiptail --clear --backtitle "IES Castuera" --title "Imagenes" --menu "Selecciona" 20 80 10 `for x in $(ls  /home/partimag/); do echo $x "-"; done` 3>&1 1>&2 2>&3)
+#echo "Imagen seleccionada: " $IMAGE_SELECTED
+
+DISKS_SELECTED=$(whiptail --clear --backtitle "IES Castuera" --title "Discos" --checklist "/home/partimage" 20 80 10 `for x in $(find /dev/sd*  -printf "%f "); do echo $x "-" off; done` 3>&1 1>&2 2>&3)
+DISKS_SELECTED=$(eval echo ${DISKS_SELECTED[@]})
+echo "Discos: " ${DISKS_SELECTED[@]}
+
+echo "/usr/sbin/ocs-sr -g auto -e1 auto -e2 -r -j2 -batch -scr -p poweroff restoredisk $IMAGE_SELECTED ${DISKS_SELECTED[@]}"
+/usr/sbin/ocs-sr -g auto -e1 auto -e2 -r -j2 -batch -scr -p poweroff restoredisk $IMAGE_SELECTED ${DISKS_SELECTED[@]}
